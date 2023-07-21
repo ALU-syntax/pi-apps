@@ -1,0 +1,431 @@
+<script type="text/javascript">
+
+	/*function saveData() {
+		if ( getCount('#table-temp') <= 0 )
+		{
+			swal("Silahkan pilih Item Barang !!");//swal("Peringatan!", "Part tidak boleh kosong.", "warning");//
+			//document.frmPartReq.kode_part.focus();
+			return;
+		}
+		else
+		{
+			$.post("modules/biaya/proses.php",
+				{
+					act: "save",
+					no : frmBiaya.no.value,
+					tipe : frmBiaya.tipe.value,
+					tanggal: frmBiaya.tanggal.value,
+          		  	ket:frmBiaya.descr.value
+				},
+				function(result,status){  // ketika sukses menyimpan data
+					var data = JSON.parse(result);
+					if (data.error) {
+						// tampilkan pesan gagal simpan data
+						swal("Gagal!", data.error.message, "error");
+					} else {
+						// tampilkan data transaksi
+						location.href = data.result.location;
+						//var table = $('#dataTables3').DataTable(); 
+						//table.ajax.reload( null, false );						   
+					}
+			});
+		}
+	}*/
+	
+	$(document).ready(function(){
+	    $('#frmBiaya').on('submit', function(e){
+    	    e.preventDefault();
+    	    
+    	    if ( getCount('#table-temp') <= 0 ){
+    			swal("Silahkan pilih Item Barang !!");
+    			return;
+    		}
+    		
+    		var formData = new FormData(this);
+    		formData.append('act', 'save');
+    		
+    		$.ajax({
+    		    url: 'modules/biaya/proses.php',
+    			type: "POST",
+    			cache: false,
+    			data: formData, 
+    			contentType: false,
+    			processData: false,
+    			success: function(data){
+    				var data = JSON.parse(data);
+					if (data.error) {
+						// tampilkan pesan gagal simpan data
+						swal("Gagal!", data.error.message, "error");
+					} else {
+						// tampilkan data transaksi
+						location.href = data.result.location;
+					}
+    			}
+    		});
+    	    
+    	    
+    	});    
+	});
+
+	function addRow() {
+		if (frmBiaya.tipe.value == "" )
+		{
+			swal("Tipe Biaya tidak boleh kosong. !!!");//swal("Peringatan!", "Part tidak boleh kosong.", "warning");//
+			frmBiaya.tipe.focus();
+			return;
+		}
+		if (frmBiaya.resto.value == "" )
+		{
+			swal("Resto tidak boleh kosong. !!!");//swal("Peringatan!", "Part tidak boleh kosong.", "warning");//
+			frmBiaya.resto.focus();
+			return;
+		}	
+		var amt = frmBiaya.amount.value; //$("#qty").val();
+		if(amt =="" || amt == 0)
+		{
+			swal("Amount tidak boleh kosong. !!!");//swal("Peringatan!", "Qty tidak boleh kosong.", "warning");//
+			frmBiaya.amount.focus();
+			return;
+		}
+		else
+		{
+			$.post("modules/biaya/proses.php",{
+				act: "add",
+				no : frmBiaya.no.value,
+          	  	tipe : frmBiaya.tipe.value,
+				ket : frmBiaya.descr.value,
+				resto:frmBiaya.resto.value,
+				tanggal: frmBiaya.tanggal.value,
+          	  	harga: amt
+				},
+				function(result,status){  // ketika sukses menyimpan data
+					var data = JSON.parse(result);
+					if (data.error) {
+						// tampilkan pesan gagal simpan data
+						swal("Gagal!", data.error.message, "error");
+					} else {
+						// tampilkan data transaksi
+						location.reload();
+						//var table = $('#dataTables3').DataTable(); 
+						//table.ajax.reload( null, false );						   
+					}
+				});
+		}
+		/* // add datatable manualy and reset/focus field
+		var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + part[0] + "</td><td>" + part[1] + "</td><td>" + qty +"</td></tr>"  ;
+		$("#dataTables3 tbody").append(markup);
+		
+		document.formPartMasuk.qty.value = "";
+		$('#kode_part').find('option:first-child').prop('selected', true).end().trigger('chosen:updated');
+		$("#kode_part").focus();
+		*/
+	}
+	
+	function removeRow(id){
+		//$("table input[type='checkbox']:checked").parent().parent().remove();
+		$.post("modules/biaya/proses.php",
+				{
+					act: "del",
+					id : id,
+				},
+				function(result,status){  // ketika sukses menyimpan data
+					//alert(result);
+					var data = JSON.parse(result);
+					if (data.error) {
+						// tampilkan pesan gagal simpan data
+						swal("Gagal!", data.error.message, "error");
+					} else {
+						// tampilkan data transaksi
+						location.reload();
+						//var table = $('#dataTables3').DataTable(); 
+						//table.ajax.reload( null, false );						   
+					}
+				});
+	}
+	
+	function tampil_part(input) {
+		
+		if(input.value == "STOK") {
+			frmPartReq.no_po.disabled = "true" ;
+			frmPartReq.no_po.value = "STOK";
+		}
+		else if(input.value == "CASH") {
+			frmPartReq.no_po.disabled = "true" ;
+			frmPartReq.no_po.value = "CASH";
+		}
+		else {
+			$('#no_po').prop("disabled", false);
+			frmPartReq.no_po.value = "";
+		}
+		/*
+		$.post("modules/part-masuk/part.php", {
+		dataidpart: part,
+		}, function(response) {      
+		$('#stok').html(response);
+		alert(response);
+		document.formPartMasuk.qty.focus();
+		});*/
+	}
+
+  function cek_qty(input) {
+    jml = frmPartReqDetail.qty.value;
+    var jumlah = eval(jml);
+    if(jumlah == 0){
+      alert('Quantity Tidak Boleh Nol !');
+      input.value = input.value.substring(0,input.value.length-1);
+    }
+  }
+
+  function hitung_total_stok() {
+   /* bil1 = document.formPartMasuk.stok.value;
+    bil2 = document.formPartMasuk.qty.value;
+
+    if (bil2 == "") {
+      var hasil = "";
+    }
+    else {
+      var hasil = eval(bil1) + eval(bil2);
+    }
+
+    document.formPartMasuk.total_stok.value = (hasil); */
+  }
+
+function getItemInfo(input) {
+		var part = input.value.split("|"); //$("#kode_part").val();
+		
+			
+		$.post("modules/part-request/invent.php", {
+			  item: part[0]
+			}, function(response) {      
+			  $('#unitSpan').html(response)
+				frmPartReqDetail.unit.value = response;
+			  document.getElementById('qty').focus();
+		});
+	
+		/*
+		$.post("modules/part-masuk/part.php", {
+		dataidpart: part,
+		}, function(response) {      
+		$('#stok').html(response);
+		alert(response);
+		document.formPartMasuk.qty.focus();
+		});*/
+	}
+</script>
+
+<?php  
+// fungsi untuk pengecekan tampilan form
+// jika form add data yang dipilih
+if ($_GET['form']=='add') { ?> 
+  <!-- tampilan form add data -->
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      <i class="fa fa-edit icon-title"></i> Input Biaya
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="?module=beranda"><i class="fa fa-home"></i> Beranda </a></li>
+      <li><a href="?module=biaya"> List Biaya </a></li>
+      <li class="active"> Tambah </li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row"> 
+      <div class="col-md-12">
+        <div class="box box-primary">
+          <!-- form start -->
+          <form role="form" name="frmBiaya" id="frmBiaya">  <!--action="modules/part-masuk/proses.php?act=insert" method="POST" --> 
+            <div class="box-body">
+              <?php  
+				  // fungsi untuk membuat kode transaksi
+          			$user = $_SESSION['id_user'];
+				  $query_id = mysqli_query($mysqli, "SELECT  nomor,tanggal, tipe, keterangan , resto FROM is_temp_inv where createdby = '$user' order by id desc limit 1;")
+													or die('Ada kesalahan pada query tampil kode_transaksi : '.mysqli_error($mysqli));
+
+				  $count = mysqli_num_rows($query_id);
+
+				  if ($count > 0) {
+					  // mengambil data kode transaksi
+					  $data_id 			= mysqli_fetch_assoc($query_id);
+					  $kode_request    	= $data_id['nomor'];
+					  $tgl				= DateTime::createFromFormat('Y-m-d', $data_id['tanggal'])->format('d-m-Y');
+					  $tipe				= $data_id['tipe'];
+            		  $descr      		= $data_id['keterangan'];
+					  $resto      		= $data_id['resto'];
+				  }
+				  else {
+            
+            		  $query_id = mysqli_query($mysqli, "SELECT  count(nomor) as id FROM is_invoice WHERE left(nomor,3) = 'INV'  and date(createdon) = date(NOW());")
+														or die('Ada kesalahan pada query tampil kode_transaksi : '.mysqli_error($mysqli));
+
+					  $count = mysqli_fetch_assoc($query_id);
+            
+            		  $query_idTmp = mysqli_query($mysqli, "SELECT  count(nomor) as id FROM is_temp_inv
+                                                    WHERE  date(createdon) = date(NOW()) and createdby != '$user'; ")
+					  														or die('Ada kesalahan pada query tampil kode_transaksi : '.mysqli_error($mysqli));
+
+					  $countTmp = mysqli_fetch_assoc($query_idTmp);
+            
+            if (($count['id'] + $countTmp['id'] )> 0) {
+						  // mengambil data po
+						  $data_id 			  = mysqli_fetch_assoc($query_id);
+						  $data_idTmp 		= mysqli_fetch_assoc($query_idTmp);
+						  $runNum			    = str_pad($count['id'] + $countTmp['id'] + 1 , 3 ,0,STR_PAD_LEFT);
+						  $kode_request		= 'INV-'.date('Ymd').$runNum;
+						 
+					  }
+					  else {
+						  $kode_request			= 'INV-'.date('Ymd').'001';
+					  }
+						$resto  = '';
+					  $descr      = '';
+					  $tgl				= date('d-m-Y');
+					  $tipe				= '';
+            $vend       = '';
+				  }
+        ?>
+			
+       <div class="form-group row" style="padding: 15px 15px 0px 15px"><!-- /row -->
+			<div class="col-md-2"> <!-- col -->
+				<div class="form-group">
+						<label>Tanggal</label>
+						<div class="input-group date">
+						<div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+						<input type="text" class="form-control date-picker" data-date-format="dd-mm-yyyy" id="tanggal" name="tanggal" autocomplete="off" value="<?php echo $tgl; ?>" >
+						</div>
+				</div>
+			</div>
+			<div class="col-md-2"> <!-- col -->
+				<div class="form-group">
+					<label>Tipe</label>
+					<select class="form-control" name="tipe" id="tipe" data-placeholder="-- Pilih --" autocomplete="off" <!--onchange="tampil_part(this)"--> >
+						<option value="" <?php if($tipe=="") echo "selected"?> ></option>
+						<option value="Energi" <?php if($tipe=="Energi") echo "selected"?> >Energi</option>
+						<option value="Gaji" <?php if($tipe=="Gaji") echo "selected"?> >Gaji</option>
+						<option value="Transport" <?php if($tipe=="Transport") echo "selected"?> >Transport</option>
+						<option value="Promo" <?php if($tipe=="Promo") echo "selected"?> >Promo</option>
+						<option value="Sewa" <?php if($tipe=="Sewa") echo "selected"?> >Sewa</option>
+						<option value="Other" <?php if($tipe=="Other") echo "selected"?> >Other</option>
+					</select>		
+				</div>			
+			</div>
+        
+        <div class="col-md-3">
+					<div class="form-group">					
+						<label for="no_po">Nomor</label>
+						<input type="text" class="form-control" disabled name="no" id="no" value=<?php echo '"'.$kode_request.'"'; //if($tipe!="PO") echo ' disabled' ?> >
+					</div>
+				</div><!-- /col -->
+        
+        <div class="col-md-3">
+					<div class="form-group">					
+						<label for="resto">Resto</label>
+						<input type="text" class="form-control"  name="resto" id="resto" value=<?php echo '"'.$resto.'"'; //if($tipe!="PO") echo ' disabled' ?> >
+					</div>
+				</div><!-- /col -->
+        
+                <div class="col-md-2">
+					<div class="form-group">					
+						<label for="input_by">Input By</label>
+						<select class="form-control" name="input_by" id="input_by">
+						    <option value="Finance">Finance</option>
+						    <option value="Purchasing">Purchasing</option>
+						</select>
+					</div>
+				</div><!-- /col -->
+        
+        <div class="col-md-7">
+					<div class="form-group">					
+						<label for="keterangan">Keterangan</label>
+						<input type="text" class="form-control"  name="descr" id="descr" value=<?php echo '"'.$descr.'"'; //if($tipe!="PO") echo ' disabled' ?> >
+					</div>
+				</div><!-- /col -->
+		 
+        
+                <div class="col-md-2">
+					<div class="form-group">
+						<label for="amount">Amount</label>
+						<input type="text" class="form-control money" id="amount" name="amount" autocomplete="off" onKeyPress="return goodchars(event,'-0123456789',this)" onkeyup="hitung_total_stok(this)&cek_qty(this)">
+					</div>
+				</div><!-- /col -->
+			
+			    <div class="col-md-3">
+					<div class="form-group">
+						<label for="bukti">Bukti</label>
+						<input type="file" class="form-control" id="bukti" name="bukti" ">
+					</div>
+				</div><!-- /col -->
+			
+			</div><!-- /row -->
+			
+			<div class="form-group" align="right">
+				<div class="col-md-12" align="right">
+					<input type="button" class="btn btn-primary btn-submit" value="Tambah" id="btnTambah" name="btnTambah" onClick="addRow()">
+					<input type="submit" class="btn btn-primary btn-submit" id="btnSimpan" name="btnSimpan" value="Simpan"><!--saveData()-->
+					<a href="?module=part_request" class="btn btn-default btn-reset">Batal</a>
+				</div>
+			</div>
+			</form>
+			
+			</div>
+			<div class="box-body">
+			<hr>
+            </div><!-- /.box body -->
+
+            <!-- <div class="box-footer"> -->
+			<div class="box-footer">
+				<table id="table-temp" class="table table-bordered table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th class="center">No.</th>
+						<th class="center">Tanggal</th>
+						<th class="center">Tipe</th>
+						<th class="center">Resto</th>
+						<th class="center">Amount</th>
+						<th class="center"></th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php
+				$no = 1;
+				// fungsi query untuk menampilkan data dari tabel part
+				$query = mysqli_query($mysqli, "SELECT *
+												FROM is_temp_inv  ORDER BY id ASC")
+												or die('Ada kesalahan pada query tampil Data Part Masuk: '.mysqli_error($mysqli));
+
+				// tampilkan data
+				while ($data = mysqli_fetch_assoc($query)) { 
+
+					// menampilkan isi tabel dari database ke tabel di aplikasi
+					echo "<tr>
+						<td width='20' class='center'>$no</td>
+						<td width='30' class='center'>$data[tanggal]</td>
+						<td width='20'>$data[tipe]</td>
+						<td width='100' class='center'>$data[resto]</td>
+						<td width='50' align='right'>$data[amount]</td>
+						
+						<td class='center' width='20'><div>
+							<a data-toggle='tooltip' data-placement='top' title='Hapus' class='btn btn-danger btn-sm' onclick= 'removeRow($data[id])' >
+							<i style='color:#fff' class='glyphicon glyphicon-trash' ></i>
+							</a>
+						</div></td>
+						</tr>";
+					$no++;
+				}
+
+				?>
+				</tbody>
+				</table>
+			  <!-- </div> -->            
+			</div><!-- /.box footer -->
+				
+          </form>
+        </div><!-- /.box -->
+      </div><!--/.col -->
+    </div>   <!-- /.row -->
+  </section><!-- /.content -->
+<?php
+}
+?>

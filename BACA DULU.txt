@@ -1,0 +1,24 @@
+Aplikasi Sparepart
+==========================================================================================================================================
+Bahasa Pemrograman 	: PHP v.7.3.x
+Database 			: MariaDB / MySQL
+Extension			: MySQLi Extension
+CSS Framework 		: Bootstrap v.3.3.7 
+Template			: AdminLTE v.2.5.4
+Report				: html2pdf_v4.4.0
+Tools				: XAMPP 7.3.x
+==========================================================================================================================================
+
+PETUNJUK PENGGUNAAN
+
+1. Install XAMPP, Download disini https://www.apachefriends.org
+2. Setelah XAMPP terinstall, buka Xampp Control Panel lalu Start Apache dan MySQL.
+3. Kemudian copy folder [parts] dan paste ke folder ..\xampp\htdocs. 
+4. Kemudian buka browser dan masuk ke localhost/phpmyadmin, buat database baru dengan nama partsdb.
+5. Import file parts.sql yang ada difolder Database ke dalam database yang telah dibuat.
+6. Setting koneksi pada file database.php yang ada pada folrder config (sesuaikan dengan pengaturan server di komputer/laptop Anda)
+7. Untuk membuka program ketikan localhost/[nama_folder].
+8. Login user : 
+		Hak akses Administrator 	: username bachtiar, password simba
+		Hak akses Gudang 			: username santi , password simba
+		Hak akses Manajer 			: username apri , password simba

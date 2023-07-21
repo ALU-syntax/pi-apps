@@ -1,0 +1,14 @@
+<?php 
+	// fungsi pengecekan level untuk menampilkan menu sesuai dengan hak akses
+	switch($_SESSION['hak_akses'])
+	{
+		case 'Super Admin':
+			include "side-menu-admin.php"; break;
+			
+		case 'Manajer':
+			include "side-menu-manager.php"; break;
+			
+		case 'Gudang':
+			include "side-menu-gudang.php"; break;
+	}
+?>

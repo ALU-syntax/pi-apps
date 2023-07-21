@@ -1,0 +1,20 @@
+<li <?php echo $listMenu["beranda"] ?> >
+	<a href="?module=beranda"><i class="fa fa-home"></i> Beranda </a>
+</li>
+<li <?php echo $listMenu["sales"] ?> >
+    <a href="?module=sales"><i class="fa fa-money"></i> Sales </a>
+</li>
+
+<li <?php echo $listMenu["mutasi"] ?> >
+    <a href="?module=part_masuk"><i class="fa fa-plus"></i> Data Mutasi Masuk </a>
+</li>
+<li <?php echo $listMenu["mutasi_keluar"] ?> >
+    <a href="?module=part_keluar"><i class="fa fa-minus"></i> Data Mutasi Keluar </a>
+</li>
+
+<li <?php echo $listMenu["user"] ?> >
+	<a href="?module=user"><i class="fa fa-user"></i> Manajemen User</a>
+</li>
+<li <?php echo $listMenu["password"] ?> >
+	<a href="?module=password"><i class="fa fa-lock"></i> Ubah Password</a>
+</li>

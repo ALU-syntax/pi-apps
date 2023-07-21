@@ -1,0 +1,355 @@
+<script type="text/javascript">
+
+	function saveData() {
+		var part = document.formPartMasuk.kode_part.value.split("|"); //$("#kode_part").val();
+		
+		if ( getCount('#table-temp') <= 0 )
+		{
+			alert("Silahkan pilih part !!");//swal("Peringatan!", "Part tidak boleh kosong.", "warning");//
+			document.formPartMasuk.kode_part.focus();
+			return;
+		}
+		else
+		{
+			$.post("modules/part-masuk/proses.php",
+				{
+					act: "save",
+				},
+				function(result,status){  // ketika sukses menyimpan data
+					var data = JSON.parse(result);
+					if (data.error) {
+						// tampilkan pesan gagal simpan data
+						swal("Gagal!", data.error.message, "error");
+					} else {
+						// tampilkan data transaksi
+						location.href = data.result.location;
+						//var table = $('#dataTables3').DataTable(); 
+						//table.ajax.reload( null, false );						   
+					}
+				});
+		}
+		
+	}
+
+	function addRow() {
+		var part = document.formPartMasuk.kode_part.value.split("|"); //$("#kode_part").val();
+		if (part[0] === "" || part[1] === "")
+		{
+			alert("Part tidak boleh kosong. !!!");//swal("Peringatan!", "Part tidak boleh kosong.", "warning");//
+			document.formPartMasuk.kode_part.focus();
+			return;
+		}
+		var qty = document.formPartMasuk.qty.value; //$("#qty").val();
+		if(qty =="" || qty == 0)
+		{
+			alert("Qty tidak boleh kosong. !!!");//swal("Peringatan!", "Qty tidak boleh kosong.", "warning");//
+			document.formPartMasuk.qty.focus();
+			return;
+		}
+		else
+		{
+			var kode_part = part[0];
+			var nama_part = part[1];
+			$.post("modules/part-masuk/proses.php",
+				{
+					act: "add",
+					kode_transaksi : document.formPartMasuk.kode_transaksi.value,
+					tanggal_transaksi: document.formPartMasuk.tanggal_transaksi.value,
+					kode_part: kode_part,
+					nama_part: nama_part,
+					qty: qty 
+				},
+				function(result,status){  // ketika sukses menyimpan data
+					var data = JSON.parse(result);
+					if (data.error) {
+						// tampilkan pesan gagal simpan data
+						swal("Gagal!", data.error.message, "error");
+					} else {
+						// tampilkan data transaksi
+						location.reload();
+						//var table = $('#dataTables3').DataTable(); 
+						//table.ajax.reload( null, false );						   
+					}
+					
+				});
+		}
+		/* // add datatable manualy and reset/focus field
+		var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + part[0] + "</td><td>" + part[1] + "</td><td>" + qty +"</td></tr>"  ;
+		$("#dataTables3 tbody").append(markup);
+		
+		document.formPartMasuk.qty.value = "";
+		$('#kode_part').find('option:first-child').prop('selected', true).end().trigger('chosen:updated');
+		$("#kode_part").focus();
+		*/
+	}
+	
+	function removeRow(id){
+		//$("table input[type='checkbox']:checked").parent().parent().remove();
+		$.post("modules/part-masuk/proses.php",
+				{
+					act: "del",
+					id : id,
+				},
+				function(result,status){  // ketika sukses menyimpan data
+					var data = JSON.parse(result);
+					if (data.error) {
+						// tampilkan pesan gagal simpan data
+						swal("Gagal!", data.error.message, "error");
+					} else {
+						// tampilkan data transaksi
+						location.reload();
+						//var table = $('#dataTables3').DataTable(); 
+						//table.ajax.reload( null, false );						   
+					}
+					
+				});
+	}
+	
+	function select_mr(input){
+		var mr = input.value;
+		$.post("modules/part-masuk/proses.php",
+				{
+					act: "mr",
+					kode_request : mr,
+					tanggal_transaksi: formPartMasuk.tanggal_transaksi.value,
+				},
+				function(result,status){  // ketika sukses menyimpan data
+					var data = JSON.parse(result);
+					if (data.error) {
+						// tampilkan pesan gagal simpan data
+						swal("Gagal!", data.error.message, "error");
+					} else {
+						// tampilkan data transaksi
+						location.reload();
+						//var table = $('#dataTables3').DataTable(); 
+						//table.ajax.reload( null, false );						   
+					}
+					
+				});	
+	}	
+
+
+	
+  function tampil_part(input){
+    var part = input.value.split("|");
+	$("#qty").focus();
+	/*
+    $.post("modules/part-masuk/part.php", {
+      dataidpart: part,
+    }, function(response) {      
+      $('#stok').html(response);
+	  alert(response);
+      document.formPartMasuk.qty.focus();
+    });*/
+  }
+
+  function cek_qty(input) {
+    jml = document.formPartMasuk.qty.value;
+    var jumlah = eval(jml);
+    if(jumlah == 0){
+      alert('Quantity Tidak Boleh Nol !');
+      input.value = input.value.substring(0,input.value.length-1);
+    }
+  }
+
+  function hitung_total_stok() {
+   /* bil1 = document.formPartMasuk.stok.value;
+    bil2 = document.formPartMasuk.qty.value;
+
+    if (bil2 == "") {
+      var hasil = "";
+    }
+    else {
+      var hasil = eval(bil1) + eval(bil2);
+    }
+
+    document.formPartMasuk.total_stok.value = (hasil); */
+  }
+</script>
+
+<?php  
+// fungsi untuk pengecekan tampilan form
+// jika form add data yang dipilih
+if ($_GET['form']=='add') { ?> 
+  <!-- tampilan form add data -->
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      <i class="fa fa-edit icon-title"></i> Input Data Mutasi Part
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="?module=beranda"><i class="fa fa-home"></i> Beranda </a></li>
+      <li><a href="?module=part_masuk"> Part Masuk </a></li>
+      <li class="active"> Tambah </li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row"> 
+      <div class="col-md-12">
+        <div class="box box-primary">
+          <!-- form start -->
+          <form role="form" class="form-horizontal" name="formPartMasuk" id="formPartMasuk">  <!--action="modules/part-masuk/proses.php?act=insert" method="POST" --> 
+            <div class="box-body">
+              <?php  
+              // fungsi untuk membuat kode transaksi
+              $query_id = mysqli_query($mysqli, "SELECT RIGHT(kode_transaksi,7) as kode FROM is_part_trans
+                                                ORDER BY kode_transaksi DESC LIMIT 1")
+                                                or die('Ada kesalahan pada query tampil kode_transaksi : '.mysqli_error($mysqli));
+
+              $count = mysqli_num_rows($query_id);
+
+              if ($count > 0) {
+                  // mengambil data kode transaksi
+                  $data_id = mysqli_fetch_assoc($query_id);
+                  $kode    = $data_id['kode']+1;
+              } else {
+                  $kode = 1;
+              }
+
+              // buat kode_transaksi
+              $tahun          = date("Y");
+              $buat_id        = str_pad($kode, 7, "0", STR_PAD_LEFT);
+              $kode_transaksi = "TM-$tahun-$buat_id";
+              ?>
+			  
+			<div class="form-group">
+                <label class="col-sm-2 control-label">No. Request</label>
+                <div class="col-sm-5">
+                  <select class="chosen-select" id="kode_request" name="kode_request" data-placeholder="-- Pilih MR --" onchange="select_mr(this)" autocomplete="off">
+                    <option value=""></option>
+                    <?php
+                      $query_part = mysqli_query($mysqli, "SELECT distinct kode_request 
+															FROM is_part_req 
+															WHERE status = 0
+															ORDER BY kode_request ASC")
+                                                            or die('Ada kesalahan pada query tampil part: '.mysqli_error($mysqli));
+                      while ($data_part = mysqli_fetch_assoc($query_part)) {
+                        echo"<option value=\"$data_part[kode_request]\"> $data_part[kode_request]</option>";
+                      }
+                    ?>
+                  </select>
+                </div>
+              </div>
+              
+
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Kode Transaksi</label>
+                <div class="col-sm-5">
+                  <input type="text" class="form-control" name="kode_transaksi" value="<?php echo $kode_transaksi; ?>" readonly required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Tanggal</label>
+                <div class="col-sm-5">
+                  <input type="text" class="form-control date-picker" data-date-format="dd-mm-yyyy" name="tanggal_transaksi" autocomplete="off" value="<?php echo date("d-m-Y"); ?>" required>
+                </div>
+              </div>
+
+			  <div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<input type="button" class="btn btn-primary btn-submit" id="btnSimpan" name="btnSimpan" value="Simpan" onClick="saveData()">
+					<a href="?module=part_masuk" class="btn btn-default btn-reset">Batal</a>
+                </div>
+			  </div>
+              <hr>
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Part</label>
+                <div class="col-sm-5">
+                  <select class="chosen-select" id="kode_part" name="kode_part" data-placeholder="-- Pilih part --" onchange="tampil_part(this)" autocomplete="off">
+                    <option value=""></option>
+                    <?php
+                      $query_part = mysqli_query($mysqli, "SELECT kode_part, nama_part FROM is_part ORDER BY nama_part ASC")
+                                                            or die('Ada kesalahan pada query tampil part: '.mysqli_error($mysqli));
+                      while ($data_part = mysqli_fetch_assoc($query_part)) {
+                        echo"<option value=\"$data_part[kode_part]|$data_part[nama_part]\"> $data_part[kode_part] | $data_part[nama_part] </option>";
+                      }
+                    ?>
+                  </select>
+                </div>
+              </div>
+              
+              <!-- <span id='stok'> 
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Nama Part</label>
+                <div class="col-sm-5">
+                  <input type="text" class="form-control" id="stok" name="stok" readonly required>
+                </div>
+              </div>
+             </span> -->
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Quantity</label>
+                <div class="col-sm-5">
+                  <input type="text" class="form-control" id="qty" name="qty" autocomplete="off" onKeyPress="return goodchars(event,'-0123456789',this)" onkeyup="hitung_total_stok(this)&cek_qty(this)">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <!-- <label class="col-sm-2 control-label">Total Stok</label> -->
+                <div class="col-sm-offset-2 col-sm-10">
+                  <!-- <input type="text" class="form-control" id="total_stok" name="total_stok" readonly required> -->
+				  <input type="button" class="btn btn-primary btn-submit" value="Tambah" id="btnTambah" name="btnTambah" onClick="addRow()"><!-- -->
+				  <input type="button" class="btn btn-primary btn-reset" value="Hapus" onClick="removeRow()">
+                </div>
+              </div>
+
+            </div><!-- /.box body -->
+
+            <!-- <div class="box-footer"> -->
+			<div class="box-footer">
+				<table id="table-temp" class="table table-bordered table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th class="center">No.</th>
+						<th class="center">Kode Part</th>
+						<th class="center">Nama Part</th>
+						<th class="center">Qty</th>
+						<th class="center">Satuan</th>
+						<th class="center"></th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php
+				$no = 1;
+				// fungsi query untuk menampilkan data dari tabel part
+				$query = mysqli_query($mysqli, "SELECT a.id,a.kode_part,a.qty,b.kode_part,b.nama_part,b.satuan
+												FROM is_temp_in as a INNER JOIN is_part as b ON a.kode_part=b.kode_part ORDER BY a.id ASC")
+												or die('Ada kesalahan pada query tampil Data Part Masuk: '.mysqli_error($mysqli));
+
+				// tampilkan data
+				while ($data = mysqli_fetch_assoc($query)) { 
+
+					// menampilkan isi tabel dari database ke tabel di aplikasi
+					echo "<tr>
+						<td width='20' class='center'>$no</td>
+						<td width='80' class='center'>$data[kode_part]</td>
+						<td width='200'>$data[nama_part]</td>
+						<td width='50' align='right'>$data[qty]</td>
+						<td width='50' class='center'>$data[satuan]</td>
+						<td class='center' width='30'><div>
+							<a data-toggle='tooltip' data-placement='top' title='Hapus' class='btn btn-danger btn-sm' onclick= 'removeRow($data[id])' >
+							<i style='color:#fff' class='glyphicon glyphicon-trash' ></i>
+							</a>
+						</div></td>
+						</tr>";
+					$no++;
+				}
+
+				?>
+				</tbody>
+				</table>
+			  <!-- </div> -->            
+			</div><!-- /.box footer -->
+				
+          </form>
+        </div><!-- /.box -->
+      </div><!--/.col -->
+    </div>   <!-- /.row -->
+  </section><!-- /.content -->
+<?php
+}
+?>
