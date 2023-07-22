@@ -306,6 +306,27 @@
 				});
 			}
 		}
+
+		function deleteResto(val, name){
+			// tampilkan notifikasi saat akan menghapus data
+			if( confirm('Anda yakin ingin menghapus Restoran : \n'+  val + " : "+ name) ){
+				var id = val;
+				$.ajax({
+					type : "POST",
+					url  : "modules/resto/proses.php",
+					data : { id : id , act : "delete" },
+					success: function(result){    
+						if (result==="sukses") {
+							window.location.href  = "?module=resto&alert=3";
+						} 
+						else
+						{
+							alert(result);
+						}
+					}
+				});
+			}
+		}
 	
 		function getCount(id){
 			var table = $(id).dataTable();

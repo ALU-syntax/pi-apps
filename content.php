@@ -32,6 +32,12 @@
 			// jika halaman konten yang dipilih form part, panggil file form part
 			case  'form_part' : include "modules/part/form.php"; break;
 
+			// jika halaman konten yang dipilih resto, panggil file view produk
+			case 'resto' : include "modules/resto/view.php"; break;
+
+			// jika halaman konten yang dipilih form resto, panggil file form resto
+			case 'form_resto' : include "modules/resto/form.php"; break;
+
 			// jika halaman konten yang dipilih produk, panggil file view produk
 			case 'produk' : include "modules/produk/view.php"; break;
 			

@@ -1,8 +1,16 @@
 <?php
 	// deklarasi parameter koneksi database
+	// $sql_details = array(
+	// 	'user' => 'yoom8124_root',
+	// 	'pass' => 'YsUMaZ.1O9xx',
+	// 	'db'   => 'yoom8124_piapps',
+	// 	'host' => '127.0.0.1',
+	// 	'port' => 3306
+	// );
+
 	$sql_details = array(
-		'user' => 'yoom8124_root',
-		'pass' => 'YsUMaZ.1O9xx',
+		'user' => 'root',
+		'pass' => '',
 		'db'   => 'yoom8124_piapps',
 		'host' => '127.0.0.1',
 		'port' => 3306

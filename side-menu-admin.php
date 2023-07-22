@@ -41,6 +41,9 @@
 		<li <?php echo $listMenu["vend"] ?> >
 			<a href="?module=vend"><i class="fa fa-folder"></i> Data Suplier </a>
 		</li>
+		<li <?php echo $listMenu["resto"] ?> >
+			<a href="?module=resto"><i class="fa fa-folder"></i> Data Restoran </a>
+		</li>
 	</ul>
 </li>
 <li <?php echo $listMenu["request"] ?> >
