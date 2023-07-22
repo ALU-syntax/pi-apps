@@ -25,11 +25,12 @@ require_once "../../config/database.php";
 			$password  = md5(mysqli_real_escape_string($mysqli, trim($_POST['password'])));
 			$nama_user = mysqli_real_escape_string($mysqli, trim($_POST['nama_user']));
 			$hak_akses = mysqli_real_escape_string($mysqli, trim($_POST['hak_akses']));
+			$resto = mysqli_real_escape_string($mysqli, trim($_POST['resto']));
 			$hari_reminder = mysqli_real_escape_string($mysqli, trim($_POST['hari_reminder']));
 
 			// perintah query untuk menyimpan data ke tabel users
-            $query = mysqli_query($mysqli, "INSERT INTO is_users(username,password,nama_user,hak_akses)
-                                            VALUES('$username','$password','$nama_user','$hak_akses')")
+            $query = mysqli_query($mysqli, "INSERT INTO is_users(username,password,nama_user,hak_akses, resto)
+                                            VALUES('$username','$password','$nama_user','$hak_akses','$resto')")
                                             or die('Ada kesalahan pada query insert : '.mysqli_error($mysqli));    
 
             // cek query
@@ -52,6 +53,7 @@ require_once "../../config/database.php";
 				$email              = mysqli_real_escape_string($mysqli, trim($_POST['email']));
 				$telepon            = mysqli_real_escape_string($mysqli, trim($_POST['telepon']));
 				$hak_akses          = mysqli_real_escape_string($mysqli, trim($_POST['hak_akses']));
+				$resto          = mysqli_real_escape_string($mysqli, trim($_POST['resto']));
 				$hari_reminder      = mysqli_real_escape_string($mysqli, trim($_POST['hari_reminder']));
 				
 				
@@ -78,6 +80,7 @@ require_once "../../config/database.php";
                     													email       = '$email',
                     													telepon     = '$telepon',
                     													hak_akses   = '$hak_akses',
+																		resto   	= '$resto',
                     													hari_reminder= $hari_reminder
                                                                   WHERE id_user 	= '$id_user'")
                                                     or die('Ada kesalahan pada query update : '.mysqli_error($mysqli));
@@ -100,6 +103,7 @@ require_once "../../config/database.php";
                     													email       = '$email',
                     													telepon     = '$telepon',
                     													hak_akses   = '$hak_akses',
+																		resto   	= '$resto',
                     													hari_reminder = $hari_reminder
                                                                   WHERE id_user 	= '$id_user'")
                                                     or die('Ada kesalahan pada query update : '.mysqli_error($mysqli));
@@ -173,6 +177,7 @@ require_once "../../config/database.php";
 			                    													telepon     = '$telepon',
 			                    													foto 		= '$nama_file',
 			                    													hak_akses   = '$hak_akses',
+																					resto   	= '$resto',
 			                    													hari_reminder= $hari_reminder
 			                                                                  WHERE id_user 	= '$id_user'")
 			                                                    or die('Ada kesalahan pada query update : '.mysqli_error($mysqli));

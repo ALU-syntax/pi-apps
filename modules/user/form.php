@@ -60,7 +60,23 @@ if ($_GET['form']=='add') { ?>
                   </select>
                 </div>
               </div>
-              
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Restoran</label>
+                <div class="col-sm-5">
+                  <select class="chosen-select" name="resto" data-placeholder="-- Pilih Resto --" autocomplete="off" required>
+                    <option value=""></option>
+                    <?php
+                        $query_part = mysqli_query($mysqli, "SELECT * FROM is_resto")
+                                        or die('Ada kesalahan pada query tampil part: '.mysqli_error($mysqli));
+                        while ($data_part = mysqli_fetch_assoc($query_part)) {
+                          echo"<option value=\"$data_part[kode_resto]\" > $data_part[kode_resto]   |   $data_part[nama_resto] </option>";
+                        }  
+                    ?>
+                  </select>
+                </div>
+              </div>
+
               <div class="form-group">
                 <label class="col-sm-2 control-label">Reminder</label>
                 <div class="col-sm-5">
@@ -181,6 +197,22 @@ elseif ($_GET['form']=='edit') {
                     <option value="Gudang">Gudang</option>
                     <option value="Finance">Finance</option>
                     <option value="Purchasing">Purchasing</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Restoran</label>
+                <div class="col-sm-5">
+                  <select class="chosen-select" name="resto" data-placeholder="-- Pilih Resto --" required>
+                    <option value="<?php echo $data['resto']; ?>"><?php echo $data['resto']; ?></option>
+                    <?php
+                        $query_part = mysqli_query($mysqli, "SELECT * FROM is_resto")
+                                        or die('Ada kesalahan pada query tampil part: '.mysqli_error($mysqli));
+                        while ($data_part = mysqli_fetch_assoc($query_part)) {
+                          echo"<option value=\"$data_part[kode_resto]\" > $data_part[kode_resto]   |   $data_part[nama_resto] </option>";
+                        }  
+                    ?>
                   </select>
                 </div>
               </div>

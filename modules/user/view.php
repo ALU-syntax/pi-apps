@@ -101,6 +101,7 @@
                 <th class="center">Username</th>
                 <th class="center">Nama User</th>
                 <th class="center">Hak Akses</th>
+                <th class="center">Restoran</th>
                 <th class="center">Status</th>
                 <th class="center"></th>
               </tr>
@@ -110,7 +111,7 @@
             <?php  
             $no = 1;
             /// fungsi query untuk menampilkan data dari tabel user
-            $query = mysqli_query($mysqli, "SELECT * FROM is_users ORDER BY id_user DESC")
+            $query = mysqli_query($mysqli, "SELECT * FROM is_users u LEFT JOIN is_resto r ON r.kode_resto = u.resto ORDER BY id_user DESC")
                                             or die('Ada kesalahan pada query tampil data user: '.mysqli_error($mysqli));
 
             // tampilkan data
@@ -130,6 +131,7 @@
               echo "  <td>$data[username]</td>
                       <td>$data[nama_user]</td>
                       <td>$data[hak_akses]</td>
+                      <td>$data[nama_resto]</td>
                       <td>$data[status]</td>
 
                       <td class='center' width='100'>
