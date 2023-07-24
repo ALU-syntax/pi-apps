@@ -559,15 +559,16 @@
 			"bSort": true,
 			"bInfo": true,
 			scrollY: '48vh',
+			scrollX: true,
 			scrollCollapse: true,
 			colReorder: true,
-			responsive: true,
+			// responsive: true,
 			lengthMenu : [[100, 500, 1000, -1], [100, 500, 1000, "All"]],
 			buttons: [  'colvis','copyHtml5', 'excelHtml5', 'pdfHtml5', 'print' ],
 			orderFixed: [[3, 'asc']],
-			rowGroup: {
-				dataSrc: 3
-			}
+			// rowGroup: {
+			// 	dataSrc: 3
+			// }
     });
 		
 		$('#dataTables-group2').dataTable({

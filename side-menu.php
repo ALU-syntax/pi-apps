@@ -50,6 +50,11 @@ $listMenu = array(
 			$listMenu["master"] = '  class="treeview menu-open active"  ';
 			$listMenu["vend"] = ' class="treeview active" ';
       	  	break;
+
+		case "resto":
+			$listMenu["master"] = '  class="treeview menu-open active"  ';
+			$listMenu["resto"] = ' class="treeview active" ';
+      	  	break;
 			
 		case "biaya":
 		case "form_biaya":
@@ -85,6 +90,11 @@ $listMenu = array(
 			$listMenu["laporan"] = '  class="treeview menu-open active"  ';
 			$listMenu["lap_mutasi"] = ' class="treeview active" ';
 			break;
+
+		case "item_opname":
+			$listMenu["laporan"] = '  class="treeview menu-open active"  ';
+			$listMenu["item_opname"] = ' class="treeview active" ';
+			break;	
 			
 		case "lap_rugilaba":
 			$listMenu["laporan"] = '  class="treeview menu-open active"  ';

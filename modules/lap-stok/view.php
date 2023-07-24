@@ -45,17 +45,21 @@
                 <th class="center">Nama Item</th>
                 <th class="center">Nama Suplier</th>
                 <th class="center">Kategori</th>
-				<th class="center">Stok Awal</th>
-				<th class="center">Stok Gudang</th>
 				<th class="center">Satuan</th>
 				<th class="center">Stok Level</th>
-				<th class="center">Stok di Kitchen</th>
-				<th class="center">Stok di Bar</th>
-				<th class="center">Stok di Pastry</th>
+				<th class="center">Stok Awal (Gudang)</th>
+				<th class="center">Stok Awal (Kitchen)</th>
+				<th class="center">Stok Awal (Bar)</th>
+				<th class="center">Stok Awal (Pastry)</th>
+				<th class="center">Stok Masuk</th>
 				<th class="center">Sales</th>
-                <th class="center">Stok Akhir</th>
-				<th class="center">Value</th>
-				<th class="center">Warning</th>
+                <th class="center">Stok Akhir (Gudang)</th>
+				<th class="center">Stok Akhir (Kitchen)</th>
+				<th class="center">Stok Akhir (Bar)</th>
+				<th class="center">Stok Akhir (Pastry)</th>
+				<th class="center">Total Stok Akhir</th>
+				<th class="center">Status</th>
+				<th class="center">Value Stok Akhir</th>
               </tr>
             </thead>
             <!-- tampilan tabel body -->
@@ -117,17 +121,94 @@
 						  <td width='280'>$data[nama_part]</td>
 						  <td width='100'>$data[nama_suplier]</td>
 						  <td width='100'>$data[kategori]</td>
-						  <td width='80' align='right'>$data[opening]</td>
-						  <td width='80' align='right'>$data[in]</td>
-						  <td width='50' class='center'>$data[satuan]</td>
+						  <td width='80' align='right'>$data[satuan]</td>
 						  <td width='80' align='right'>$data[stok_level]</td>
-						  <td width='80' align='right'>".(($data["stock_kitchen"] ?? 0) + $data["sales_kitchen"])."</td>
-						  <td width='80' align='right'>".(($data["stock_bar"] ?? 0) + $data["sales_bar"])."</td>
-						  <td width='80' align='right'>".(($data["stock_pastry"] ?? 0) + $data["sales_pastry"])."</td>
+						  <td width='50' class='center'>$data[opening]</td>
+						  <td width='80' align='right'>$data[stock_kitchen]</td>
+						  <td width='80' align='right'>$data[stock_bar]</td>
+						  <td width='80' align='right'>$data[stock_pastry]</td>
+						  <td width='80' align='right'>$data[in]</td>
 						  <td width='80' align='right'>$data[sales]</td>
-					      <td width='80' align='right'>$data[ending]</td>
-						  <td width='80' align='right'>Rp. ".number_format(abs($data["value"]),2,',','.')."</td>
+					      <td width='80' align='right'>".(($data["opening"] ?? 0) - $data["out"])."</td>
+						  <td width='80' align='right'>".(($data["stock_kitchen"] ?? 0) - $data["sales_kitchen"])."</td>
+						  <td width='80' align='right'>".(($data["stock_bar"] ?? 0) - $data["sales_bar"])."</td>
+						  <td width='80' align='right'>".(($data["stock_pastry"] ?? 0) - $data["sales_pastry"])."</td>
+						  <td width='80' align='right'>$data[ending]</td>
 						  <td width='80' align='right'>$warning</td>
+						  <td width='80' align='right'>Rp. ".number_format(abs($data["value"]),2,',','.')."</td>
+						</tr>";
+				  $no++;
+				}
+			}else{
+				$tanggal         	= mysqli_real_escape_string($mysqli, trim($_POST['tgl_awal']));
+				$exp             	= explode('-',$tanggal);
+				$tgl_awal			= $exp[2]."-".$exp[1]."-".$exp[0];
+				$tanggal         	= mysqli_real_escape_string($mysqli, trim($_POST['tgl_akhir']));
+				$exp             	= explode('-',$tanggal);
+				$tgl_akhir			= $exp[2]."-".$exp[1]."-".$exp[0];
+				
+								
+				$no = 1;
+				// fungsi query untuk menampilkan data dari tabel part
+				$query = mysqli_query($mysqli, "SELECT 
+													a.kode_part,
+													a.nama_part,
+													c.nama nama_suplier,
+													a.kategori,
+													a.satuan,
+													a.stok,
+													a.stok + SUM(if( b.tanggal_transaksi < '$tgl_awal', b.qty,0)) AS 'opening',
+													SUM(if(b.referensi='receipt' AND (b.tanggal_transaksi BETWEEN '$tgl_awal' AND '$tgl_akhir'), b.qty,0)) AS 'in',
+													SUM(if(b.referensi='issue' AND (b.tanggal_transaksi BETWEEN '$tgl_awal' AND '$tgl_akhir'), b.qty,0)) AS 'out',
+													a.stok + SUM(if( b.tanggal_transaksi <= '$tgl_akhir', b.qty,0)) AS 'ending',
+													a.stok_level,
+													(SELECT COALESCE(SUM(qty), 0) AS 'qty' FROM is_part_consump WHERE kode_item = a.kode_part AND `group` = 'Kitchen' AND tanggal BETWEEN '$tgl_awal' AND '$tgl_akhir' GROUP BY `group`) AS 'stock_kitchen',
+													(SELECT COALESCE(SUM(qty), 0) AS 'qty' FROM is_part_consump WHERE kode_item = a.kode_part AND `group` = 'Bar' AND tanggal BETWEEN '$tgl_awal' AND '$tgl_akhir' GROUP BY `group`) AS 'stock_bar',
+													(SELECT COALESCE(SUM(qty), 0) AS 'qty' FROM is_part_consump WHERE kode_item = a.kode_part AND `group` = 'Pastry' AND tanggal BETWEEN '$tgl_awal' AND '$tgl_akhir' GROUP BY `group`) AS 'stock_pastry',
+													SUM(if(b.referensi='sales' AND b.`group` = 'Kitchen' AND (b.tanggal_transaksi BETWEEN '$tgl_awal' AND '$tgl_akhir'), b.qty,0)) AS 'sales_kitchen',
+													SUM(if(b.referensi='sales' AND b.`group` = 'Bar' AND (b.tanggal_transaksi BETWEEN '$tgl_awal' AND '$tgl_akhir'), b.qty,0)) AS 'sales_bar',
+													SUM(if(b.referensi='sales' AND b.`group` = 'Pastry' AND (b.tanggal_transaksi BETWEEN '$tgl_awal' AND '$tgl_akhir'), b.qty,0)) AS 'sales_pastry',
+													SUM(if(b.referensi='sales' AND (b.tanggal_transaksi BETWEEN '$tgl_awal' AND '$tgl_akhir'), b.qty,0)) AS 'sales',
+													SUM(if(b.referensi='sales' AND (b.tanggal_transaksi BETWEEN '$tgl_awal' AND '$tgl_akhir'), b.qty * b.harga,0)) AS 'value'
+												FROM is_part a
+												LEFT JOIN is_suplier c ON a.kode_suplier = c.kode
+												LEFT JOIN is_part_trans b ON a.kode_part = b.kode_part
+												GROUP BY a.kode_part ")
+												or die('Ada kesalahan pada query tampil Data Part: '.mysqli_error($mysqli));
+
+				// tampilkan data
+				while ($data = mysqli_fetch_assoc($query)) { 
+				
+				 $ending	 = $data['ending'];
+				 $stok_level = $data['stok_level'];
+				
+				if ( $ending>=$stok_level ) { 
+					$warning = "Aman";
+				} else { 
+					$warning = "Kritis"; 
+				}
+				  
+				  // menampilkan isi tabel dari database ke tabel di aplikasi
+				  echo "<tr>
+						  <td width='60' class='center'>$data[kode_part]</td>
+						  <td width='280'>$data[nama_part]</td>
+						  <td width='100'>$data[nama_suplier]</td>
+						  <td width='100'>$data[kategori]</td>
+						  <td width='80' align='right'>$data[satuan]</td>
+						  <td width='80' align='right'>$data[stok_level]</td>
+						  <td width='50' class='center'>$data[opening]</td>
+						  <td width='80' align='right'>$data[stock_kitchen]</td>
+						  <td width='80' align='right'>$data[stock_bar]</td>
+						  <td width='80' align='right'>$data[stock_pastry]</td>
+						  <td width='80' align='right'>$data[in]</td>
+						  <td width='80' align='right'>$data[sales]</td>
+					      <td width='80' align='right'>".(($data["opening"] ?? 0) - $data["out"])."</td>
+						  <td width='80' align='right'>".(($data["stock_kitchen"] ?? 0) - $data["sales_kitchen"])."</td>
+						  <td width='80' align='right'>".(($data["stock_bar"] ?? 0) - $data["sales_bar"])."</td>
+						  <td width='80' align='right'>".(($data["stock_pastry"] ?? 0) - $data["sales_pastry"])."</td>
+						  <td width='80' align='right'>$data[ending]</td>
+						  <td width='80' align='right'>$warning</td>
+						  <td width='80' align='right'>Rp. ".number_format(abs($data["value"]),2,',','.')."</td>
 						</tr>";
 				  $no++;
 				}
@@ -141,4 +222,11 @@
 	  
     </div><!--/.col -->
   </div>   <!-- /.row -->
-</section><!-- /.content
+</section><!-- /.content -->
+
+<!-- <td width='80' align='right'>".(($data["stock_kitchen"] ?? 0) + $data["sales_kitchen"])."</td>
+						  <td width='80' align='right'>".(($data["stock_bar"] ?? 0) + $data["sales_bar"])."</td>
+						  <td width='80' align='right'>".(($data["stock_pastry"] ?? 0) + $data["sales_pastry"])."</td>
+						  <td width='80' align='right'>$data[sales]</td>
+					      <td width='80' align='right'>$data[ending]</td>
+						  <td width='80' align='right'>Rp. ".number_format(abs($data["value"]),2,',','.')."</td> -->

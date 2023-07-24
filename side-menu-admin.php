@@ -75,6 +75,9 @@
 		<li <?php echo $listMenu["lap_mutasi"] ?>>
 			<a href="?module=lap_part_masuk"><i class="fa fa-circle-o"></i> Mutasi Item </a>
 		</li>
+		<li <?php echo $listMenu["item_opname"] ?>>
+			<a href="?module=item_opname"><i class="fa fa-circle-o"></i> Item Opname </a>
+		</li>
 		<li <?php echo $listMenu["lap_rugilaba"] ?>>
 			<a href="?module=lap_rugilaba"><i class="fa fa-circle-o"></i> Rugilaba </a>
 		</li>

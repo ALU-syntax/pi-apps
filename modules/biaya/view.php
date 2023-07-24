@@ -72,7 +72,7 @@
 					$tanggal         = $data['tanggal'];
 					$exp             = explode('-',$tanggal);
 					$tanggal_transaksi   = $exp[2]."-".$exp[1]."-".$exp[0];
-					$amount =$data[amount];
+					$amount =$data['amount'];
            		 	
 					// menampilkan isi tabel dari database ke tabel di aplikasi
 					echo "<tr>

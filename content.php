@@ -93,6 +93,9 @@
 			
 			// jika halaman konten yang dipilih laporan rugi laba, panggil file view laporan lap rugi laba
 			case  'lap_rugilaba' : include "modules/lap-rugilaba/view.php"; break;	
+
+			// jika halaman konten yang dipilih item opname, panggil file view item opname
+			case  'item_opname' : include "modules/item-opname/view.php"; break;
 			
 			// jika halaman konten yang dipilih user, panggil file view user
 			case  'user' : include "modules/user/view.php"; break;
