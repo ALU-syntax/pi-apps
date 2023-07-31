@@ -326,7 +326,7 @@ function getItemInfo(input) {
 			
 		$.post("modules/part-request/invent.php", {
 			  item: part[0]
-			}, function(response) {      
+			}, function(response) {  
 			  $('#unitSpan').html(response)
 				frmPartReqDetail.unit.value = response;
 			  document.getElementById('qty').focus();

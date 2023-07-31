@@ -96,6 +96,9 @@
 
 			// jika halaman konten yang dipilih item opname, panggil file view item opname
 			case  'item_opname' : include "modules/item-opname/view.php"; break;
+
+			// jika halaman konten yang dipilih item add opname, panggil file view add item opname 
+			case  'form_opname' : include "modules/item-opname/form.php"; break;
 			
 			// jika halaman konten yang dipilih user, panggil file view user
 			case  'user' : include "modules/user/view.php"; break;

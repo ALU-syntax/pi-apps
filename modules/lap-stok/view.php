@@ -129,7 +129,7 @@
 						  <td width='80' align='right'>$data[stock_pastry]</td>
 						  <td width='80' align='right'>$data[in]</td>
 						  <td width='80' align='right'>$data[sales]</td>
-					      <td width='80' align='right'>".(($data["opening"] ?? 0) - $data["out"])."</td>
+					      <td width='80' align='right'>".(($data["opening"] ?? 0) + $data["in"] )."</td>
 						  <td width='80' align='right'>".(($data["stock_kitchen"] ?? 0) - $data["sales_kitchen"])."</td>
 						  <td width='80' align='right'>".(($data["stock_bar"] ?? 0) - $data["sales_bar"])."</td>
 						  <td width='80' align='right'>".(($data["stock_pastry"] ?? 0) - $data["sales_pastry"])."</td>
@@ -202,7 +202,7 @@
 						  <td width='80' align='right'>$data[stock_pastry]</td>
 						  <td width='80' align='right'>$data[in]</td>
 						  <td width='80' align='right'>$data[sales]</td>
-					      <td width='80' align='right'>".(($data["opening"] ?? 0) - $data["out"])."</td>
+					      <td width='80' align='right'>".(($data["opening"] ?? 0) + $data["in"])."</td>
 						  <td width='80' align='right'>".(($data["stock_kitchen"] ?? 0) - $data["sales_kitchen"])."</td>
 						  <td width='80' align='right'>".(($data["stock_bar"] ?? 0) - $data["sales_bar"])."</td>
 						  <td width='80' align='right'>".(($data["stock_pastry"] ?? 0) - $data["sales_pastry"])."</td>
